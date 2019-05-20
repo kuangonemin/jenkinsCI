@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+	<title>Intro to graphics - 4.10</title>
+
+	<link rel="stylesheet" href="https://js.arcgis.com/4.10/esri/css/main.css">
+	<script src="https://js.arcgis.com/4.10/"></script>
+
+	<style>
+		html,
+		body,
+		#viewDiv {
+			padding: 0;
+			margin: 0;
+			height: 100%;
+			width: 100%;
+		}
+	</style>
+
+	<script>
+		require([
+			"esri/WebMap",
+			"esri/views/MapView",
+			"esri/Graphic",
+			"esri/geometry/Polyline",
+			"esri/layers/FeatureLayer",
+			"esri/symbols/SimpleFillSymbol",
+			"esri/layers/GraphicsLayer",
+			"esri/Color",
+			"esri/WebScene",
+			"esri/views/SceneView"
+		], function(
+				WebMap, MapView, Graphic,Polyline,FeatureLayer,
+				Color,GraphicsLayer,SceneView,WebScene
+		) {
+
+			var graphicsLayer = new FeatureLayer({
+				outFields: ["*"],
+			});
+
+//			var webScene = new WebScene({
+//				portalItem: { // autocasts as new PortalItem()
+//					id: "a0c3884daaf74842823d4a7328662157"
+//				},
+//				layers:[graphicsLayer]
+//			});
+//
+//			var view = new SceneView({
+//				map: webScene,
+//				container: "viewDiv",
+//				// set highlightOptions like color and fillOpacity
+//				highlightOptions: {
+//					color: [255, 241, 58],
+//					fillOpacity: 0.4
+//				},
+//				environment: {
+//					atmosphereEnabled: true,
+//					atmosphere: {
+//						quality: "high"
+//					}
+//				}
+//			});
+			var map = new WebMap({
+				portalItem: {
+					id: "a0c3884daaf74842823d4a7328662157"
+				},
+				layers:[graphicsLayer]
+			});
+
+			var view = new MapView({
+				//center: [-80, 35],
+				container: "viewDiv",
+				map: map,
+				zoom: 12,
+				highlightOptions: {
+					color: "orange"
+				}
+			});
+			//map.add(graphicsLayer);
+
+			// Create a symbol for drawing the point
+			var markerSymbol = {
+				type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+				color: [226, 119, 40],
+				outline: { // autocasts as new SimpleLineSymbol()
+					color: [255, 255, 255],
+					width: 2
+				}
+			};
+
+			/****************************
+			 * Create a polyline graphic
+			 ****************************/
+
+					// First create a line geometry (this is the Keystone pipeline)
+			var polyline = {
+						type: "polyline", // autocasts as new Polyline()
+						paths: [
+							[109.509, 18.258],
+							[109.51, 18.255],
+							[109.51, 18.253],
+							[109.51, 18.249],
+							[109.51, 18.246],
+
+							[109.511, 18.242],
+							[109.511, 18.238],
+							[109.51, 18.235],
+							[109.509, 18.232]
+						]
+					};
+
+			// Create a symbol for drawing the line
+			var lineSymbol = {
+				type: "simple-line", // autocasts as SimpleLineSymbol()
+				color: "grayish",
+				width: 4
+			};
+			// Create an object for storing attributes related to the line
+			var lineAtt = {
+				riverCode: "H001",
+				河道名称: "三亚河",
+				河道起点: "马家村",
+				河道终点: "牛家村",
+				河道长度: "1km",
+				整治目标: "整治污水",
+				所属区域: "地球村",
+				河长名称: "马大富",
+				河长职位: "村委书记",
+				河长联系电话: "123456987"
+			};
+
+			/*******************************************
+			 * Create a new graphic and add the geometry,
+			 * symbol, and attributes to it. You may also
+			 * add a simple PopupTemplate to the graphic.
+			 * This allows users to view the graphic's
+			 * attributes when it is clicked.
+			 ******************************************/
+			var polylineGraphic = new Graphic({
+				geometry: polyline,
+				symbol: lineSymbol,
+				attributes: lineAtt,
+				popupTemplate: { // autocasts as new PopupTemplate()
+					title: "{河道名称}",
+					content: [{
+						type: "fields",
+						fieldInfos: [{
+							fieldName: "河道名称"
+						}, {
+							fieldName: "河道起点"
+						}, {
+							fieldName: "河道终点"
+						}, {
+							fieldName: "河道长度"
+						}, {
+							fieldName: "整治目标"
+						}, {
+							fieldName: "所属区域"
+						}, {
+							fieldName: "河长名称"
+						}, {
+							fieldName: "河长职位"
+						}, {
+							fieldName: "河长联系电话"
+						}]
+					}]
+				}
+
+			});
+
+			// Add the graphics to the view's graphics layer
+			//view.graphics.addMany([polylineGraphic]);
+			graphicsLayer.graphics.add(polylineGraphic);
+
+
+//			//第一种高亮
+//			view.whenLayerView(graphicsLayer)
+//					.then(function(layerView) {
+//						view.on("pointer-move", eventHandler);
+//						view.on("pointer-down", eventHandler);
+//
+//						function eventHandler(event) {
+//							// the hitTest() checks to see if any graphics in the view
+//							// intersect the x, y coordinates of the pointer
+//							view.hitTest(event)
+//									.then(getGraphics);
+//						}
+//
+//						let highlight, currentYear, currentName;
+//
+//						function getGraphics(response) {
+//
+//							// the topmost graphic from the hurricanesLayer
+//							// and display select attribute values from the
+//							// graphic to the user
+//							if (response.results.length) {
+//								const graphic = response.results.filter(function(result) {
+//									return result.graphic.layer === graphicsLayer;
+//								})[0].graphic;
+//
+//								const attributes = graphic.attributes;
+//								const category = attributes.CAT;
+//								const wind = attributes.WIND_KTS;
+//								const name = attributes.河长名称;
+//								const year = attributes.YEAR;
+//								const id = attributes.riverCode;
+//
+//								if (highlight && (currentName !== name || currentYear !==
+//										year)) {
+//									highlight.remove();
+//									highlight = null;
+//									return;
+//								}
+//
+//								view.whenLayerView(graphic.layer).then(function(layerView){
+//									layerView.highlight(graphic);
+//								});
+//
+//								document.getElementById("info").style.visibility =
+//										"visible";
+//								document.getElementById("name").innerHTML = name;
+//								document.getElementById("category").innerHTML = "Category " +
+//										category;
+//								document.getElementById("wind").innerHTML = wind + " kts";
+//
+//								// highlight all features belonging to the same hurricane as the feature
+//								// returned from the hitTest
+////								const query = layerView.createQuery();
+////								query.where = "河长名称 = " + name;
+////								layerView.queryObjectIds(query)
+////										.then(function(ids) {
+////											highlight = layerView.highlight(ids);
+////											currentYear = year;
+////											currentName = name;
+////										});
+//
+////								layerView.queryGraphics().then(function(results){
+////									highlight = layerView.highlight(results.items(0).geometry);
+////									console.log(highlight);  // prints the array of client-side graphics to the console
+////								});
+//
+//							} else {
+//								// remove the highlight if no features are
+//								// returned from the hitTest
+//								highlight.remove();
+//								highlight = null;
+//								document.getElementById("info").style.visibility = "hidden";
+//							}
+//						}
+//
+//					})
+//					.catch(function(error) {
+//						console.log("hello")
+//					});
+
+			// highlight feature on pointer-move
+//			view.on("pointer-move", function(event){
+//				view.hitTest(event).then(function(response){
+//					if (response.results.length) {
+//						var graphic = response.results.filter(function (result) {
+//							return result.graphic.layer === graphicsLayer;
+//						})[0].graphic;
+//
+//						view.whenLayerView(graphic.layer).then(function(layerView){
+//							layerView.highlight(graphic);
+//						});
+//					}
+//				});
+//			});
+
+
+			//第二种高亮
+			// highlight feature on pointer-move
+//			view.on("pointer-move", function(event){
+//				view.hitTest(event).then(function(response){
+//					if (response.results.length) {
+//						var graphic = response.results.filter(function (result) {
+//							return result.graphic === graphicsLayer;
+//						})[0].graphic;
+//						//var graphic = response.results[0].graphic;
+//
+//						view.whenLayerView(graphic.layer).then(function(layerView){
+//							vie.graphics.highlight(graphic);
+//						});
+//					}
+//				});
+//			});
+
+//			view.on("pointer-move", function (evt) {
+//				view.hitTest(evt).then(function (response) {
+//					var result = response.results[0];
+//					if (result && result.graphic) {
+//						//console.log(result);
+//						var graphic = result.graphic;
+//						//自定义高亮
+//						//这里的几何图形是面状，配置graphic的symbol为fillSymbol
+//						graphic.symbol = {
+//							type: "simple-line",
+//							color: "red",
+//							width: "4",
+//							outline: {
+//								color: "orange",
+//								width: "4"
+//							}
+//						};
+//						view.graphics.removeAll();//清除上一次点击目标
+//						view.graphics.highlight(graphic);//添加新的点击目标
+//					}
+//				})
+//			});
+
+			//第三种高亮显示
+//			view.when().then(function() {
+//				return graphicsLayer.when();
+//			}).then(function(layer) {
+//				const renderer = layer.renderer.clone();
+//				renderer.symbol.width = 4;
+//				renderer.symbol.color = [128, 128, 128, 0.8];
+//				layer.renderer = renderer;
+//
+//				// Set up an event handler for pointer-down (mobile)
+//				// and pointer-move events (mouse)
+//				// and retrieve the screen x, y coordinates
+//
+//				return view.whenLayerView(layer);
+//			}).then(function(layerView) {
+//				view.on("pointer-move", eventHandler);
+//				view.on("pointer-down", eventHandler);
+//
+//				function eventHandler(event) {
+//					// the hitTest() checks to see if any graphics in the view
+//					// intersect the x, y coordinates of the pointer
+//					view.hitTest(event)
+//							.then(getGraphics);
+//				}
+//
+//				let highlight, currentYear, currentName;
+//
+//				function getGraphics(response) {
+//
+//					// the topmost graphic from the hurricanesLayer
+//					// and display select attribute values from the
+//					// graphic to the user
+//					if (response.results.length) {
+//						const graphic = response.results.filter(function(result) {
+//							return result.graphic.layer === graphicsLayer;
+//						})[0].graphic;
+//
+//						const attributes = graphic.attributes;
+//						const category = attributes.CAT;
+//						const wind = attributes.WIND_KTS;
+//						const name = attributes.NAME;
+//						const year = attributes.YEAR;
+//						const id = attributes.OBJECTID;
+//
+//						if (highlight && (currentName !== name || currentYear !==
+//								year)) {
+//							highlight.remove();
+//							highlight = null;
+//							return;
+//						}
+//
+//						document.getElementById("info").style.visibility =
+//								"visible";
+//						document.getElementById("name").innerHTML = name;
+//						document.getElementById("category").innerHTML = "Category " +
+//								category;
+//						document.getElementById("wind").innerHTML = wind + " kts";
+//
+//						// highlight all features belonging to the same hurricane as the feature
+//						// returned from the hitTest
+//						const query = layerView.layer.createQuery();
+//						query.where = "YEAR = " + year + " AND NAME = '" + name +
+//								"'";
+//						layerView.queryObjectIds(query)
+//								.then(function(ids) {
+//									highlight = layerView.highlight(ids);
+//									currentYear = year;
+//									currentName = name;
+//								});
+//
+//					} else {
+//						// remove the highlight if no features are
+//						// returned from the hitTest
+//						highlight.remove();
+//						highlight = null;
+//						document.getElementById("info").style.visibility = "hidden";
+//					}
+//				}
+//
+//			});
+
+
+
+//			view.on("click", function (event) {
+//				var screenPoint = {
+//					x: event.x,
+//					y: event.y
+//				};
+//
+//				// Search for graphics at the clicked location
+//				view.hitTest(screenPoint).then(function (response) {
+//					if (response.results.length) {
+//						var graphic = response.results.filter(function (result) {
+//							// check if the graphic belongs to the layer of interest
+//							return result.graphic.layer === myLayer;
+//						})[0].graphic;
+//						// do something with the result graphic
+//						console.log(graphic.attributes);
+//					}
+//				});
+//			});
+		});
+	</script>
+</head>
+
+<body>
+<div id="viewDiv"></div>
+<div id="info">
+	<span id="name"></span>
+	<br>
+	<span id="category"></span>
+	<br>
+	<span id="wind"></span>
+</div>
+</body>
+
+</html>

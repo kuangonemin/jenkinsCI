@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+	<title>Intro to graphics - 4.10</title>
+	<script src="http://192.168.10.101:8080/arcGis/resources/jquery-1.9.1.min.js"></script>
+</head>
+
+<body>
+<script>
+	function download() {
+		var url = 'http://192.168.10.101:8081/rms/fileDownload/137';
+		var xhr = new XMLHttpRequest();
+		var token = "TM-TOKEN HpVcmhZUpTcsLghRJWXXClYPaRiv894MsOC+ypPyPrzK7d5LjLe8GATztubXyM5jC9B87CoJbA=="
+		xhr.open('GET', url, true);// 也可以使用POST方式，根据接口
+		xhr.setRequestHeader("authorization",token);
+		xhr.responseType = "blob";    // 返回类型blob
+		// 定义请求完成的处理函数，请求前也可以增加加载框/禁用下载按钮逻辑
+		xhr.onload = function () {
+			// 请求完成
+			if (this.status === 200) {
+				// 返回200
+				var blob = new Blob([this.response]); // 转成文本存储
+				var a = document.createElement('a'); // 转换完成，创建一个a标签用于下载
+				a.download = "123.xlsx";
+				var downUrl = window.URL.createObjectURL(blob)
+				a.href = downUrl; // 转成本地连接到blob文本
+				document.body.appendChild(a);
+				a.click();
+				document.body.removeChild(a)
+				window.URL.revokeObjectURL(downUrl)
+			}
+		};
+		// 发送ajax请求
+		xhr.send()
+	}
+</script>
+<div id="viewDiv"><button onclick="download()">xiazai</button></div>
+</body>
+</html>

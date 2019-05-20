@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+	<title>Intro to MapView - Create a 2D map - 4.10</title>
+	<style>
+		html,
+		body,
+		#viewDiv {
+			padding: 0;
+			margin: 0;
+			height: 100%;
+			width: 100%;
+		}
+	</style>
+
+	<link rel="stylesheet" href="https://js.arcgis.com/4.10/esri/css/main.css">
+	<script src="https://js.arcgis.com/4.10/"></script>
+
+##	<script>
+##		require([
+##			"esri/Map",
+##			"esri/views/MapView"
+##		], function(Map, MapView, Basemap, WebTileLayer) {
+##
+##			var map = new Map({
+##				basemap: "streets"
+##			});
+##//
+##//			var view = new MapView({
+##//				container: "viewDiv",
+##//				map: map,
+##//				zoom: 4
+##//			});
+##//			var basemap = new Basemap({
+##//				baseLayers: [
+##//					new WebTileLayer("http://localhost:6080/arcgis/rest/services//hello/basemap102/MapServer")
+##//			]
+##//		});
+##			var view = new MapView({
+##				container: "viewDiv",
+##				map: map
+##			});
+##
+##		});
+##	</script>
+
+##	<script>
+##		require([
+##					"esri/Map",
+##					"esri/views/MapView",
+##					"esri/layers/TileLayer"
+##				],
+##				function(
+##						Map, MapView,
+##						TileLayer
+##				) {
+##					var map = new Map({
+##						basemap:"streets-navigation-vector"
+##					});
+##					var view = new MapView({
+##						container: "viewDiv",
+##						map: map,
+##					});
+##
+##
+##					var featureLayer = new TileLayer({
+##						url: "http://localhost:6080/arcgis/rest/services/SampleWorldCities/MapServer"
+##					});
+##					map.add(featureLayer);
+##				});
+##	</script>
+
+##	<script>
+##		var myMap, view;
+##		require([
+##			"esri/Basemap",
+##			"esri/layers/TileLayer",
+##			"esri/Map",
+##			"esri/views/MapView",
+##			"dojo/domReady!"
+##		], function (Basemap, TileLayer, Map, MapView){
+##			var layer = new TileLayer({
+##				url: "http://localhost:6080/arcgis/rest/services/SampleWorldCities/MapServer"
+##			});
+##			var customBasemap = new Basemap({
+##				baseLayers: [layer],
+##				title: "Custom Basemap",
+##				id: "myBasemap"
+##			});
+##			myMap = new Map({
+##				basemap: customBasemap
+##			});
+##			view = new MapView({
+##				//center: [-111.87, 40.57], // long, lat
+##				container: "viewDiv",
+##				map: myMap,
+##				zoom: 6
+##			});
+##		});
+##	</script>
+
+	<script>
+		require([
+			"esri/Basemap",
+			"esri/Map",
+			"esri/views/MapView",
+			"esri/layers/TileLayer",
+			"dojo/domReady!"
+		], function(
+				Basemap,Map,MapView,TileLayer
+		) {
+			var tilelayer = new TileLayer({
+				url: "	http://localhost:6080/arcgis/rest/services/taile/MyMapService/MapServer"
+			});
+			// Add layer to map
+			var customBasemap = new Basemap({
+				baseLayers: [tilelayer],
+				title: "Custom Basemap",
+				id: "myBasemap"
+			});
+			var map = new Map({
+				basemap: customBasemap
+			});
+			map.add(tilelayer);
+			var view = new MapView({
+				map: map,
+				container: "viewDiv",
+				center: [104.286, 29.942],
+				zoom: 1
+			});
+
+		});
+	</script>
+</head>
+
+<body>
+<div id="viewDiv"></div>
+</body>
+</html>
