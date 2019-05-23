@@ -6,7 +6,7 @@
 pipeline {
 	agent any
 	tools {
-		jdk 'Oracle JDK 8u201'
+		jdk 'Oracle JDK 8u171'
 		maven 'Maven 3.3.9'
 	}
 	stages {
