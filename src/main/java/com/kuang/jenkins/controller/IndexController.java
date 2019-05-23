@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class IndexController {
 
 	@RequestMapping("/index.htm")
-	public String reqIndex(){
+	public String reqIndex() {
 		System.out.println("hello world");
 		return "index";
 	}
