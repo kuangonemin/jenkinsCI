@@ -388,13 +388,13 @@
             </goals>
           </execution>
         </executions>
-        <!--<configuration>-->
-          <!--<testFilesIncluded>-->
-            <!--<jMeterTestFile>/src/test/jmeter/jmeter_baidu.jmx</jMeterTestFile>-->
-          <!--</testFilesIncluded>-->
-          <!--<resultsFileNameDateFormat>MMMM, yyyy</resultsFileNameDateFormat>-->
-          <!--<jmeterVersion>3.2</jmeterVersion>-->
-        <!--</configuration>-->
+        <configuration>
+          <testFilesIncluded>
+            <jMeterTestFile>/src/test/jmeter/jmeter_baidu.jmx</jMeterTestFile>
+          </testFilesIncluded>
+          <resultsFileNameDateFormat>MMMM, yyyy</resultsFileNameDateFormat>
+          <jmeterVersion>3.2</jmeterVersion>
+        </configuration>
       </plugin>
     </plugins>
   </build>
